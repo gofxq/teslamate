@@ -652,7 +652,7 @@ defmodule TeslaMate.Log do
           count()
         },
         where:
-          c.car_id == ^id and c.duration_min > 10 and c.end_battery_level <= 95 and
+          c.car_id == ^id and c.duration_min > 10 and c.end_battery_level <= 100 and
             not is_nil(field(c, ^end_range)) and not is_nil(field(c, ^start_range)) and
             c.charge_energy_added > 0.0,
         group_by: 1,

@@ -303,6 +303,23 @@ defmodule TeslaMate.SettingsTest do
     alias TeslaMate.Log.{Car, ChargingProcess, Position}
     alias TeslaMate.Log
 
+    test "includes charging sessions ending at 100% SoC in efficiency calculation" do
+      %Car{efficiency: nil} = car = car_fixture(%{efficiency: nil})
+
+      data = [
+        {100.0, 200.0, nil, nil, 15.0, 40, 100, 30},
+        {120.0, 220.0, nil, nil, 15.0, 50, 100, 35}
+      ]
+
+      :ok = insert_charging_processes(car, data)
+      settings = Settings.get_global_settings!()
+
+      assert {:ok, _settings} =
+               Settings.update_global_settings(settings, %{preferred_range: :ideal})
+
+      assert %Car{efficiency: 0.15} = Log.get_car!(car.id)
+    end
+
     test "triggers a recalculaten of efficiencies if the preferred range changes" do
       %Car{efficiency: nil} = car = car_fixture(%{efficiency: nil})
 
